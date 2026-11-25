@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ALISHER XUSUSIY KORXONA — Yoqilg‘i hisob-kitoblari</title>
+  <meta name="description" content="Fermer xo‘jaliklari bilan yoqilg‘i hisob-kitoblari tizimi">
+  <meta name="theme-color" content="#0a1222">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23143a7a'/%3E%3Cpath d='M16 6c4 5 7 8.6 7 12.2A7 7 0 0 1 9 18.2C9 14.6 12 11 16 6z' fill='%238fc1ff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="bg-layer" aria-hidden="true"></div>
+
+  <!-- Chap menyu -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 2.5c3.2 4 5.8 7 5.8 10.1a5.8 5.8 0 0 1-11.6 0C6.2 9.5 8.8 6.5 12 2.5z"/></svg>
+      </div>
+      <div class="brand-text">
+        <strong>ALISHER</strong>
+        <span>Xususiy korxona</span>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <div class="nav-label">Asosiy</div>
+      <a href="#/bosh" data-route="bosh"><i data-icon="home"></i><span>Bosh sahifa</span></a>
+      <a href="#/qarzdorlar" data-route="qarzdorlar"><i data-icon="alert"></i><span>Eng katta qarzdorlar</span></a>
+      <a href="#/yoqilgi" data-route="yoqilgi"><i data-icon="fuel"></i><span>Yoqilg‘isi borlar</span></a>
+      <a href="#/harakatsiz" data-route="harakatsiz"><i data-icon="clock"></i><span>Harakatsiz qarzdorlar</span></a>
+      <a href="#/aksverka" data-route="aksverka"><i data-icon="scale"></i><span>Aksverka</span></a>
+      <div class="nav-label">Filiallar</div>
+      <a href="#/filiallar" data-route="filiallar"><i data-icon="building"></i><span>Umumiy hisobot</span></a>
+      <div id="nav-branches"></div>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="src-line"><i data-icon="sheet"></i><span id="src-name">Google Sheets</span></div>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <!-- Asosiy qism -->
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" id="menu-btn" aria-label="Menyu"><i data-icon="menu"></i></button>
+      <div class="top-title">
+        <h1>ALISHER XUSUSIY KORXONA</h1>
+        <div class="top-meta">
+          <span id="today"></span>
+          <span class="dot">•</span>
+          <span>Yangilangan: <b id="updated-at">—</b></span>
+        </div>
+      </div>
+
+      <div class="global-search">
+        <i data-icon="search"></i>
+        <input id="global-search" type="search" placeholder="Fermer xo‘jaligi yoki INN…" autocomplete="off">
+        <div class="search-results" id="search-results"></div>
+      </div>
+
+      <div class="top-actions">
+        <span class="status-pill" id="status-pill"><span class="pulse"></span><span id="status-text">Ulanmoqda…</span></span>
+        <button class="btn btn-primary" id="refresh-btn"><i data-icon="refresh"></i><span>Yangilash</span></button>
+      </div>
+    </header>
+
+    <div class="period-bar" id="period-bar">
+      <div class="period-group">
+        <label>Yil</label>
+        <select id="year-select"></select>
+      </div>
+      <div class="period-group">
+        <label>Davr: dan</label>
+        <select id="from-select"></select>
+      </div>
+      <div class="period-group">
+        <label>gacha</label>
+        <select id="to-select"></select>
+      </div>
+      <div class="chips" id="quick-periods">
+        <button data-q="last">Oxirgi oy</button>
+        <button data-q="ytd">Yil boshidan</button>
+        <button data-q="all">Hammasi</button>
+      </div>
+      <div class="period-note" id="period-note"></div>
+    </div>
+
+    <div class="offline-banner" id="offline-banner" hidden>
+      <i data-icon="wifiOff"></i>
+      <span>Internet aloqasi yo‘q. Oxirgi saqlangan ma'lumotlar ko‘rsatilmoqda.</span>
+    </div>
+
+    <main class="view" id="view" tabindex="-1"></main>
+  </div>
+
+  <!-- Yuklanish -->
+  <div class="loader" id="loader">
+    <div class="loader-card">
+      <div class="drop-loader"><span></span><span></span><span></span></div>
+      <p id="loader-text">Google Sheets'dan ma'lumotlar olinmoqda…</p>
+    </div>
+  </div>
+
+  <!-- Parol oynasi (faqat APP_PASSWORD o‘rnatilgan bo‘lsa) -->
+  <div class="modal" id="login-modal" hidden>
+    <form class="modal-card" id="login-form">
+      <div class="brand-mark big"><svg viewBox="0 0 24 24"><path d="M12 2.5c3.2 4 5.8 7 5.8 10.1a5.8 5.8 0 0 1-11.6 0C6.2 9.5 8.8 6.5 12 2.5z"/></svg></div>
+      <h2>Tizimga kirish</h2>
+      <p>Davom etish uchun parolni kiriting.</p>
+      <input type="password" id="login-pass" placeholder="Parol" autocomplete="current-password" required>
+      <div class="form-error" id="login-error"></div>
+      <button class="btn btn-primary wide" type="submit">Kirish</button>
+    </form>
+  </div>
+
+  <div class="toast-wrap" id="toasts"></div>
+</body>
+</html>

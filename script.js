@@ -288,7 +288,12 @@ async function fetchData({ silent = false } = {}) {
     const pass = sGet(CFG.passKey);
     if (pass) headers['x-app-key'] = pass;
 
-    const res = await fetch(`${CFG.api}?t=${Date.now()}`, { headers, cache: 'no-store' });
+    let res = await fetch(`${CFG.api}?t=${Date.now()}`, { headers, cache: 'no-store' });
+    if (res.status === 404) {
+      // netlify.toml'dagi yo‘naltirish ishlamasa — funksiyaning to‘g‘ridan-to‘g‘ri manzili
+      res = await fetch(`/.netlify/functions/sheets?t=${Date.now()}`, { headers, cache: 'no-store' });
+      if (res.status === 404) throw new Error('Server funksiyasi topilmadi (404). Netlify\'da "netlify/functions/sheets.js" joylashmagan: sayt drag & drop orqali yuklangan yoki netlify.toml loyiha ildizida emas. README, 2-qadamga qarang.');
+    }
     let data = null;
     try { data = await res.json(); } catch (_) { /* JSON emas */ }
 
